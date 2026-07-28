@@ -1,10 +1,6 @@
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 import { env } from "../config/env.js";
-
-interface TokenPayload {
-  userId: string;
-  email: string;
-}
+import { TokenPayload } from "../modules/auth/auth.types.js";
 
 export const generateAccessToken = (payload: TokenPayload): string => {
   return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
