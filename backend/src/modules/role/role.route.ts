@@ -13,4 +13,6 @@ router.patch("/:id", roleController.updateRole);
 
 router.delete("/:id", roleController.deleteRole);
 
+router.post("/:id/permissions", roleController.assignPermissions);
+
 export default router;

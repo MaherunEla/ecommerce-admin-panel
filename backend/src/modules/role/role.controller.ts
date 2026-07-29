@@ -59,3 +59,16 @@ export const deleteRole = async (
     message: "Role deleted successfully",
   });
 };
+
+export const assignPermissions = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  const result = await roleService.assignPermissions(req.params.id, req.body);
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    message: "Permissions assigned successfully",
+    data: result,
+  });
+};

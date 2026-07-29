@@ -4,3 +4,6 @@ export const createRoleSchema = z.object({
     description: z.string().optional(),
 });
 export const updateRoleSchema = createRoleSchema.partial();
+export const assignPermissionSchema = z.object({
+    permissionIds: z.array(z.string()).min(1),
+});

@@ -1,7 +1,11 @@
 import prisma from "../../lib/prisma.js";
 import { ApiError } from "../../errors/ApiError.js";
 import { HTTP_STATUS } from "../../constants/httpStatus.js";
-import { CreateRoleInput, UpdateRoleInput } from "./role.validation.js";
+import {
+  CreateRoleInput,
+  UpdateRoleInput,
+  AssignPermissionInput,
+} from "./role.validation.js";
 
 export const createRole = async (payload: CreateRoleInput) => {
   const exists = await prisma.role.findUnique({
@@ -93,4 +97,55 @@ export const deleteRole = async (id: string) => {
   });
 
   return;
+};
+
+export const assignPermissions = async (
+  roleId: string,
+  payload: AssignPermissionInput,
+) => {
+  const role = await prisma.role.findUnique({
+    where: {
+      id: roleId,
+    },
+  });
+
+  if (!role) {
+    throw new ApiError(HTTP_STATUS.NOT_FOUND, "Role not found");
+  }
+
+  const permissions = await prisma.permission.findMany({
+    where: {
+      id: {
+        in: payload.permissionIds,
+      },
+    },
+  });
+
+  if (permissions.length !== payload.permissionIds.length) {
+    throw new ApiError(
+      HTTP_STATUS.NOT_FOUND,
+      "One or more permissions not found",
+    );
+  }
+
+  await prisma.rolePermission.createMany({
+    data: payload.permissionIds.map((permissionId) => ({
+      roleId,
+      permissionId,
+    })),
+    skipDuplicates: true,
+  });
+
+  return prisma.role.findUnique({
+    where: {
+      id: roleId,
+    },
+    include: {
+      permissions: {
+        include: {
+          permission: true,
+        },
+      },
+    },
+  });
 };
