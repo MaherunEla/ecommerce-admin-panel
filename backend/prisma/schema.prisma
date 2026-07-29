@@ -37,12 +37,14 @@ model Permission {
   name        String           @unique
   module      String
   description String?
+  createdAt   DateTime         @default(now())
   roles       RolePermission[]
 }
 
 model Role {
   id          String           @id @default(cuid())
   name        String           @unique
+  createdAt   DateTime         @default(now())
   users       User[]
   permissions RolePermission[]
 }

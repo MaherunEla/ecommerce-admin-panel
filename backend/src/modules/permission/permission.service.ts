@@ -18,3 +18,25 @@ export const createPermission = async (payload: CreatePermissionInput) => {
     data: payload,
   });
 };
+
+export const getPermissions = async () => {
+  return prisma.permission.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
+export const getPermissionById = async (id: string) => {
+  const permission = await prisma.permission.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!permission) {
+    throw new ApiError(HTTP_STATUS.NOT_FOUND, "Permission not found");
+  }
+
+  return permission;
+};
