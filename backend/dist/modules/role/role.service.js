@@ -14,3 +14,21 @@ export const createRole = async (payload) => {
         data: payload,
     });
 };
+export const getRoles = async () => {
+    return prisma.role.findMany({
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+};
+export const getRoleById = async (id) => {
+    const role = await prisma.role.findUnique({
+        where: {
+            id,
+        },
+    });
+    if (!role) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, "Role not found");
+    }
+    return role;
+};

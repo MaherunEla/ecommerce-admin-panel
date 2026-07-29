@@ -11,3 +11,26 @@ export const createRole = async (req: Request, res: Response) => {
     data: result,
   });
 };
+
+export const getRoles = async (req: Request, res: Response) => {
+  const result = await roleService.getRoles();
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    message: "Roles fetched successfully",
+    data: result,
+  });
+};
+
+export const getRoleById = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  const result = await roleService.getRoleById(req.params.id);
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    message: "Role fetched successfully",
+    data: result,
+  });
+};
