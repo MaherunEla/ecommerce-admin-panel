@@ -3,6 +3,7 @@ import authRoutes from "../modules/auth/auth.route.js";
 import permissionRoutes from "../modules/permission/permission.route.js";
 import roleRoutes from "../modules/role/role.route.js";
 import userRoutes from "../modules/user/user.route.js";
+import mediaRoutes from "../modules/media/media.route.js";
 
 const router = Router();
 
@@ -13,5 +14,7 @@ router.use("/permissions", permissionRoutes);
 router.use("/roles", roleRoutes);
 
 router.use("/users", userRoutes);
+
+router.use("/media", mediaRoutes);
 
 export default router;
