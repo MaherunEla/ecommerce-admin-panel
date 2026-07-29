@@ -13,13 +13,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
   refreshTokens RefreshToken[]
+  roleId        String
+  role          Role           @relation(fields: [roleId], references: [id])
 }
 
 model RefreshToken {
@@ -27,7 +28,30 @@ model RefreshToken {
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Permission {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  module      String
+  description String?
+  roles       RolePermission[]
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  users       User[]
+  permissions RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
 }
