@@ -34,3 +34,28 @@ export const getRoleById = async (
     data: result,
   });
 };
+
+export const updateRole = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  const result = await roleService.updateRole(req.params.id, req.body);
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    message: "Role updated successfully",
+    data: result,
+  });
+};
+
+export const deleteRole = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  await roleService.deleteRole(req.params.id);
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    message: "Role deleted successfully",
+  });
+};

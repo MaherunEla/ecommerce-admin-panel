@@ -32,3 +32,48 @@ export const getRoleById = async (id) => {
     }
     return role;
 };
+export const updateRole = async (id, payload) => {
+    const role = await prisma.role.findUnique({
+        where: {
+            id,
+        },
+    });
+    if (!role) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, "Role not found");
+    }
+    if (payload.name) {
+        const existingRole = await prisma.role.findFirst({
+            where: {
+                name: payload.name,
+                NOT: {
+                    id,
+                },
+            },
+        });
+        if (existingRole) {
+            throw new ApiError(HTTP_STATUS.CONFLICT, "Role name already exists");
+        }
+    }
+    return prisma.role.update({
+        where: {
+            id,
+        },
+        data: payload,
+    });
+};
+export const deleteRole = async (id) => {
+    const role = await prisma.role.findUnique({
+        where: {
+            id,
+        },
+    });
+    if (!role) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, "Role not found");
+    }
+    await prisma.role.delete({
+        where: {
+            id,
+        },
+    });
+    return;
+};
