@@ -1,7 +1,7 @@
 import { HTTP_STATUS } from "../../constants/httpStatus.js";
 import { ApiError } from "../../errors/ApiError.js";
 import prisma from "../../lib/prisma.js";
-import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken, } from "../../utils/jwt.js";
 import { comparePassword } from "../../utils/password.js";
 export const login = async ({ email, password }) => {
     const user = await prisma.user.findUnique({
@@ -44,4 +44,58 @@ export const login = async ({ email, password }) => {
             email: user.email,
         },
     };
+};
+export const refreshToken = async (refreshToken) => {
+    const storedToken = await prisma.refreshToken.findUnique({
+        where: {
+            token: refreshToken,
+        },
+    });
+    if (!storedToken) {
+        throw new ApiError(HTTP_STATUS.UNAUTHORIZED, "Invalid refresh token");
+    }
+    if (storedToken.expiresAt < new Date()) {
+        throw new ApiError(HTTP_STATUS.UNAUTHORIZED, "Refresh token expired");
+    }
+    const payload = verifyRefreshToken(refreshToken);
+    const accessToken = generateAccessToken({
+        userId: payload.userId,
+        email: payload.email,
+    });
+    return {
+        accessToken,
+    };
+};
+export const me = async (userId) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId,
+        },
+        select: {
+            id: true,
+            email: true,
+            isActive: true,
+            createdAt: true,
+        },
+    });
+    if (!user) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, "User not found");
+    }
+    return user;
+};
+export const logout = async (refreshToken) => {
+    const token = await prisma.refreshToken.findUnique({
+        where: {
+            token: refreshToken,
+        },
+    });
+    if (!token) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, "Refresh token not found");
+    }
+    await prisma.refreshToken.delete({
+        where: {
+            token: refreshToken,
+        },
+    });
+    return;
 };
