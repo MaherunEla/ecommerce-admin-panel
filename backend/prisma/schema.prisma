@@ -57,3 +57,10 @@ model RolePermission {
 
   @@id([roleId, permissionId])
 }
+
+model Media {
+  id        String   @id @default(cuid())
+  url       String
+  altText   String?
+  createdAt DateTime @default(now())
+}
