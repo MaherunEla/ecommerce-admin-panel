@@ -8,3 +8,19 @@ export const createUser = async (req, res) => {
         data: result,
     });
 };
+export const getUsers = async (req, res) => {
+    const result = await userService.getUsers();
+    res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: "Users fetched successfully",
+        data: result,
+    });
+};
+export const getUserById = async (req, res) => {
+    const result = await userService.getUserById(req.params.id);
+    res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: "User fetched successfully",
+        data: result,
+    });
+};

@@ -42,3 +42,39 @@ export const createUser = async (payload: CreateUserInput) => {
     },
   });
 };
+
+export const getUsers = async () => {
+  return prisma.user.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      email: true,
+      isActive: true,
+      createdAt: true,
+      role: true,
+    },
+  });
+};
+
+export const getUserById = async (id: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      email: true,
+      isActive: true,
+      createdAt: true,
+      role: true,
+    },
+  });
+
+  if (!user) {
+    throw new ApiError(HTTP_STATUS.NOT_FOUND, "User not found");
+  }
+
+  return user;
+};
