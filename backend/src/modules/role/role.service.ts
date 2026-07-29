@@ -36,6 +36,13 @@ export const getRoleById = async (id: string) => {
     where: {
       id,
     },
+    include: {
+      permissions: {
+        include: {
+          permission: true,
+        },
+      },
+    },
   });
 
   if (!role) {
