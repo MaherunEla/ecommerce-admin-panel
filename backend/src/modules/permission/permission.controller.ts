@@ -34,3 +34,31 @@ export const getPermissionById = async (
     data: result,
   });
 };
+
+export const updatePermission = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  const result = await permissionService.updatePermission(
+    req.params.id,
+    req.body,
+  );
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    message: "Permission updated successfully",
+    data: result,
+  });
+};
+
+export const deletePermission = async (
+  req: Request<{ id: string }>,
+  res: Response,
+) => {
+  await permissionService.deletePermission(req.params.id);
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    message: "Permission deleted successfully",
+  });
+};

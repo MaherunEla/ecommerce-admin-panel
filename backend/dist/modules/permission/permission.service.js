@@ -14,3 +14,53 @@ export const createPermission = async (payload) => {
         data: payload,
     });
 };
+export const getPermissions = async () => {
+    return prisma.permission.findMany({
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+};
+export const getPermissionById = async (id) => {
+    const permission = await prisma.permission.findUnique({
+        where: {
+            id,
+        },
+    });
+    if (!permission) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, "Permission not found");
+    }
+    return permission;
+};
+export const updatePermission = async (id, payload) => {
+    const permission = await prisma.permission.findUnique({
+        where: {
+            id,
+        },
+    });
+    if (!permission) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, "Permission not found");
+    }
+    return prisma.permission.update({
+        where: {
+            id,
+        },
+        data: payload,
+    });
+};
+export const deletePermission = async (id) => {
+    const permission = await prisma.permission.findUnique({
+        where: {
+            id,
+        },
+    });
+    if (!permission) {
+        throw new ApiError(HTTP_STATUS.NOT_FOUND, "Permission not found");
+    }
+    await prisma.permission.delete({
+        where: {
+            id,
+        },
+    });
+    return;
+};
