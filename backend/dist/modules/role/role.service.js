@@ -26,6 +26,13 @@ export const getRoleById = async (id) => {
         where: {
             id,
         },
+        include: {
+            permissions: {
+                include: {
+                    permission: true,
+                },
+            },
+        },
     });
     if (!role) {
         throw new ApiError(HTTP_STATUS.NOT_FOUND, "Role not found");
