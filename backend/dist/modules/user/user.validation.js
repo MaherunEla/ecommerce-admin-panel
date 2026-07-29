@@ -4,3 +4,9 @@ export const createUserSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters"),
     roleId: z.string().min(1, "Role is required"),
 });
+export const updateUserSchema = z.object({
+    email: z.email().optional(),
+    password: z.string().min(6).optional(),
+    roleId: z.string().optional(),
+    isActive: z.boolean().optional(),
+});

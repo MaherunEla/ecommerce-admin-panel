@@ -24,3 +24,18 @@ export const getUserById = async (req, res) => {
         data: result,
     });
 };
+export const updateUser = async (req, res) => {
+    const result = await userService.updateUser(req.params.id, req.body);
+    res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: "User updated successfully",
+        data: result,
+    });
+};
+export const deleteUser = async (req, res) => {
+    await userService.deleteUser(req.params.id);
+    res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: "User deleted successfully",
+    });
+};
