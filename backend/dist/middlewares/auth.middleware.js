@@ -2,11 +2,10 @@ import { verifyAccessToken } from "../utils/jwt.js";
 import { ApiError } from "../errors/ApiError.js";
 import { HTTP_STATUS } from "../constants/httpStatus.js";
 export const authenticate = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
+    const token = req.cookies.accessToken;
+    if (!token) {
         throw new ApiError(HTTP_STATUS.UNAUTHORIZED, "Access token is required");
     }
-    const token = authHeader.split(" ")[1];
     try {
         const payload = verifyAccessToken(token);
         req.user = payload;

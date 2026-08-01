@@ -76,6 +76,12 @@ export const me = async (userId) => {
             email: true,
             isActive: true,
             createdAt: true,
+            role: {
+                select: {
+                    id: true,
+                    name: true,
+                },
+            },
         },
     });
     if (!user) {

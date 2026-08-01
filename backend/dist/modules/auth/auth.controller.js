@@ -6,10 +6,22 @@ export const login = async (req, res, next) => {
     try {
         const validatedData = loginSchema.parse(req.body);
         const result = await authService.login(validatedData);
+        res.cookie("accessToken", result.accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 15 * 60 * 1000,
+        });
+        res.cookie("refreshToken", result.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
         return res.status(HTTP_STATUS.OK).json({
             success: true,
             message: "Login successful",
-            data: result,
+            data: result.user,
         });
     }
     catch (error) {
@@ -37,11 +49,20 @@ export const me = async (req, res) => {
     });
 };
 export const logout = async (req, res) => {
-    const { refreshToken } = req.body;
-    if (!refreshToken) {
-        throw new ApiError(HTTP_STATUS.BAD_REQUEST, "Refresh token is required");
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+        await authService.logout(refreshToken);
     }
-    await authService.logout(refreshToken);
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+    });
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+    });
     res.status(HTTP_STATUS.OK).json({
         success: true,
         message: "Logout successful",
