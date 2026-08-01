@@ -98,6 +98,12 @@ export const me = async (userId: string) => {
       email: true,
       isActive: true,
       createdAt: true,
+      role: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 

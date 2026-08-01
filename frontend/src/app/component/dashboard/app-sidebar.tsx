@@ -21,17 +21,15 @@ import {
 import Link from "next/link";
 import { NavUser } from "./nav-user";
 import { NavMain } from "./nav.main";
+import { useAppSelector } from "@/store/hooks";
 
-interface AppSidebarProps {
-  username: string;
-  useremail: string;
-}
-
-export function AppSidebar({ username, useremail }: AppSidebarProps) {
+export function AppSidebar() {
+  const user = useAppSelector((state) => state.auth.user);
+  console.log({ user });
   const data = {
     user: {
-      name: username,
-      email: useremail,
+      email: user?.email ?? "",
+      role: user?.role?.name ?? "",
       avatar: "https://github.com/shadcn.png",
     },
     navMain: [

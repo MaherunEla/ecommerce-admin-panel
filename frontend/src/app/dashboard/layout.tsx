@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "../component/dashboard/app-sidebar";
+
 import { Toaster } from "sonner";
+import ReduxProvider from "@/store/provider";
+import AuthProvider from "../component/dashboard/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,19 +28,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <SidebarProvider>
-          <AppSidebar username={"ela"} useremail={"admin@gmail.com"} />
-          <SidebarInset>
-            <div className="flex flex-1 flex-col p-4">{children}</div>
-          </SidebarInset>
-        </SidebarProvider>
-        <Toaster />
-      </body>
-    </html>
+    <div>
+      <ReduxProvider>
+        <AuthProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <div className="flex flex-1 flex-col p-4">{children}</div>
+            </SidebarInset>
+          </SidebarProvider>
+        </AuthProvider>
+      </ReduxProvider>
+
+      <Toaster />
+    </div>
   );
 }

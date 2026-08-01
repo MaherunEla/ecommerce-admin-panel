@@ -8,13 +8,11 @@ export const authenticate = (
   res: Response,
   next: NextFunction,
 ) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.accessToken;
 
-  if (!authHeader?.startsWith("Bearer ")) {
+  if (!token) {
     throw new ApiError(HTTP_STATUS.UNAUTHORIZED, "Access token is required");
   }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     const payload = verifyAccessToken(token);

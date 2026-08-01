@@ -1,11 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React from "react";
-import axios from "axios";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { api } from "@/lib/axios";
 const loginformSchema = z.object({
   email: z
     .string()
@@ -30,10 +30,7 @@ const Login = () => {
   const onSubmit = async (data: FormValues) => {
     console.log("Form submitted", data);
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/v1/auth/login",
-        data,
-      );
+      const res = await api.post("/auth/login", data);
       console.log({ res });
       toast("login successful");
       router.push("/dashboard");

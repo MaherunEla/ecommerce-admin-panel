@@ -14,10 +14,24 @@ export const login = async (
 
     const result = await authService.login(validatedData);
 
+    res.cookie("accessToken", result.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
     return res.status(HTTP_STATUS.OK).json({
       success: true,
       message: "Login successful",
-      data: result,
+      data: result.user,
     });
   } catch (error) {
     next(error);
@@ -51,13 +65,23 @@ export const me = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  const { refreshToken } = req.body;
+  const refreshToken = req.cookies.refreshToken;
 
-  if (!refreshToken) {
-    throw new ApiError(HTTP_STATUS.BAD_REQUEST, "Refresh token is required");
+  if (refreshToken) {
+    await authService.logout(refreshToken);
   }
 
-  await authService.logout(refreshToken);
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
 
   res.status(HTTP_STATUS.OK).json({
     success: true,
